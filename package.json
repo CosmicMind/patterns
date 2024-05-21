@@ -1,6 +1,6 @@
 {
   "name": "@cosmicmind/patternjs",
-  "version": "0.0.1-rc-052024-3",
+  "version": "0.0.1-rc-052124-3",
   "description": "A library of Design Patterns in TypeScript.",
   "keywords": [],
   "author": {
@@ -44,20 +44,18 @@
     "test:coverage": "vitest run --coverage --config vite.config.test.ts --mode ${VITE_MODE:-test}"
   },
   "dependencies": {
-    "@cosmicmind/foundationjs": "^0.0.1-rc-052024-1"
+    "@cosmicmind/foundationjs": "^0.0.1-rc-052124-1"
   },
   "devDependencies": {
     "@microsoft/eslint-formatter-sarif": "^3.1.0",
     "@types/node": "^18.19.33",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
-    "@vitejs/plugin-vue": "^4.6.2",
     "@vitest/coverage-v8": "^0.34.6",
-    "@vue/compiler-sfc": "^3.2.38",
-    "@vue/eslint-config-typescript": "^11.0.3",
     "eslint": "^8.57.0",
     "eslint-plugin-yml": "^1.14.0",
     "npm-run-all": "^4.1.5",
+    "terser": "^5.31.0",
     "ts-node": "^10.9.2",
     "tslib": "^2.6.2",
     "typescript": "^5.4.5",
