@@ -30,35 +30,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * @module Prototype
- */
-
 import {
-  assign,
-} from '@cosmicmind/foundationjs'
+  it,
+  expect,
+  describe,
+} from 'vitest'
 
-/**
- * A `Prototypeable` structure is capable of being cloned and producing
- * a new instance of its type.
- */
-export interface Prototypeable {
-  /**
-   * Creates a copy of itself and returns it.
-   */
-  clone(): this
+import { guard } from '@cosmicmind/foundationjs'
+
+import { Builder } from '@/index'
+
+type Query = {
+  project: string
+  version: number
+  tags?: string[]
 }
 
-/**
- * A `Prototype` provides copies of itself rather than instantiating
- * newly created instances. The `assign` method is used to provide
- * the copy of the instance.
- */
-export abstract class Prototype implements Prototypeable {
-  /**
-   * Creates a copy of itself and returns it.
-   */
-  clone(): this {
-    return assign(Object.create(Object.getPrototypeOf(this) ?? null), this) as this
-  }
-}
+const project = 'projects'
+const version = 1
+const tags = [
+  'typescript',
+  'coding',
+  'language'
+]
+
+describe('CommandCHain', () => {
+  it('set', () => {
+    const qb = new Builder<Query>({
+      project,
+      version,
+    })
+
+    qb.set('tags', tags)
+
+    const q = qb.build()
+
+    expect(guard(q, ...Object.keys(q) as (keyof Query)[])).toBeTruthy()
+
+    expect(project).toBe(q.project)
+    expect(version).toBe(q.version)
+
+    expect('undefined' !== typeof q.tags).toBeTruthy()
+    expect(tags).toBe(q.tags as string[])
+  })
+})

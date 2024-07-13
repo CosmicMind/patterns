@@ -31,23 +31,24 @@
  */
 
 /**
- * @module CommandChainHandler
+ * @module RequestChain
  */
 
 import {
   Nullable,
 } from '@cosmicmind/foundationjs'
 
-export type CommandChainHandler<T> = {
-  get next(): Nullable<CommandChainHandler<T>>
+export type Chainable<T> = {
+  get next(): Nullable<Chainable<T>>
 
+  execute(arg: T): void
   isProcessable(arg: T): boolean
 }
 
-export abstract class AbstractCommandChainHandler<T> implements CommandChainHandler<T> {
-  protected _next?: Nullable<CommandChainHandler<T>>
+export abstract class RequestChain<T> implements Chainable<T> {
+  protected _next?: Nullable<Chainable<T>>
 
-  get next(): Nullable<CommandChainHandler<T>> {
+  get next(): Nullable<Chainable<T>> {
     return this._next || null
   }
 
@@ -55,7 +56,7 @@ export abstract class AbstractCommandChainHandler<T> implements CommandChainHand
     this._next = null
   }
 
-  setNext(handler: CommandChainHandler<T>): void {
+  setNext(handler: Chainable<T>): void {
     this._next = handler
   }
 
@@ -63,6 +64,12 @@ export abstract class AbstractCommandChainHandler<T> implements CommandChainHand
     this._next = null
   }
 
-  abstract execute(arg: T): void
+  execute(arg: T): void {
+    if (!this.handle(arg)) {
+      this.next?.execute(arg)
+    }
+  }
+
   abstract isProcessable(arg: T): boolean
+  protected abstract handle(arg: T): boolean
 }

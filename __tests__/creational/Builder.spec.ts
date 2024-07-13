@@ -36,9 +36,13 @@ import {
   describe,
 } from 'vitest'
 
-import { guard } from '@cosmicmind/foundationjs'
+import {
+  guard,
+} from '@cosmicmind/foundationjs'
 
-import { Builder } from '@/index'
+import {
+  Builder,
+} from '@/index'
 
 type Query = {
   project: string
