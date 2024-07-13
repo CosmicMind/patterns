@@ -30,6 +30,5 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export * from '@/interfaces'
-export * from '@/creational'
-export * from '@/behavioral'
+export * from '@/creational/Builder'
+export * from '@/creational/Prototype'

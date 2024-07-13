@@ -30,6 +30,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export * from '@/interfaces'
-export * from '@/creational'
-export * from '@/behavioral'
+/**
+ * @module CommandChainHandler
+ */
+
+import {
+  Nullable,
+} from '@cosmicmind/foundationjs'
+
+export type CommandChainHandler<T> = {
+  get next(): Nullable<CommandChainHandler<T>>
+
+  isProcessable(arg: T): boolean
+}
+
+export abstract class AbstractCommandChainHandler<T> implements CommandChainHandler<T> {
+  protected _next?: Nullable<CommandChainHandler<T>>
+
+  get next(): Nullable<CommandChainHandler<T>> {
+    return this._next || null
+  }
+
+  constructor() {
+    this._next = null
+  }
+
+  setNext(handler: CommandChainHandler<T>): void {
+    this._next = handler
+  }
+
+  removeNext(): void {
+    this._next = null
+  }
+
+  abstract execute(arg: T): void
+  abstract isProcessable(arg: T): boolean
+}
