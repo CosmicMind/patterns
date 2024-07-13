@@ -36,41 +36,69 @@ import {
   describe,
 } from 'vitest'
 
-import { guard } from '@cosmicmind/foundationjs'
+import {
+  ProcessChain,
+} from '@/index'
 
-import { Builder } from '@/index'
-
-type Query = {
-  project: string
-  version: number
-  tags?: string[]
+type Data = {
+  prop: number
 }
 
-const project = 'projects'
-const version = 1
-const tags = [
-  'typescript',
-  'coding',
-  'language'
-]
+class DataProcessChain extends ProcessChain<Data> {
+  isProcessable(data: Data): boolean {
+    return 'prop' in data
+  }
 
-describe('CommandCHain', () => {
-  it('set', () => {
-    const qb = new Builder<Query>({
-      project,
-      version,
-    })
+  protected execute(data: Data): void {
+    ++data.prop
+  }
+}
 
-    qb.set('tags', tags)
+class UnprocessableProcessChain extends ProcessChain<Data> {
+  isProcessable(data: Data): boolean {
+    return !('prop' in data)
+  }
 
-    const q = qb.build()
+  protected execute(data: Data): void {
+    ++data.prop
+  }
+}
 
-    expect(guard(q, ...Object.keys(q) as (keyof Query)[])).toBeTruthy()
+describe('ProcessChain', () => {
+  it('count the links in the chain', () => {
+    const a = new DataProcessChain()
+    const b = new DataProcessChain()
 
-    expect(project).toBe(q.project)
-    expect(version).toBe(q.version)
+    const data = {
+      prop: 0,
+    }
 
-    expect('undefined' !== typeof q.tags).toBeTruthy()
-    expect(tags).toBe(q.tags as string[])
+    expect(a.isProcessable(data)).toBeTruthy()
+    expect(b.isProcessable(data)).toBeTruthy()
+
+    a.append(b)
+    a.process(data)
+
+    expect(data.prop).toBe(1)
+  })
+
+  it('break the links in the chain', () => {
+    const a = new UnprocessableProcessChain()
+    const b = new DataProcessChain()
+    const c = new DataProcessChain()
+
+    const data = {
+      prop: 0,
+    }
+
+    expect(a.isProcessable(data)).toBeFalsy()
+    expect(b.isProcessable(data)).toBeTruthy()
+    expect(c.isProcessable(data)).toBeTruthy()
+
+    a.append(b)
+    b.append(c)
+    a.process(data)
+
+    expect(data.prop).toBe(1)
   })
 })

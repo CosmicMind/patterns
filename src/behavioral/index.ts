@@ -31,3 +31,4 @@
  */
 
 export * from '@/behavioral/Observable'
+export * from '@/behavioral/ProcessChain'

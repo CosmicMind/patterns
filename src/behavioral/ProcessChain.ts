@@ -31,7 +31,7 @@
  */
 
 /**
- * @module RequestChain
+ * @module ProcessChain
  */
 
 import {
@@ -39,15 +39,38 @@ import {
 } from '@cosmicmind/foundationjs'
 
 export type Chainable<T> = {
+  /**
+   * Retrieves the next value in the chain.
+   *
+   * @return {Nullable<Chainable<T>>} The next value in the chain, or null if there is none.
+   */
   get next(): Nullable<Chainable<T>>
 
-  execute(arg: T): void
+  /**
+   * Executes the provided argument of type T.
+   *
+   * @param {T} arg - The argument to be executed.
+   * @return {void} - This method does not return any value.
+   */
+  process(arg: T): void
+
+  /**
+   * Checks if the provided argument is processable.
+   *
+   * @param {T} arg - The argument to be checked for processability.
+   * @return {boolean} - Returns `true` if the argument is processable, otherwise returns `false`.
+   */
   isProcessable(arg: T): boolean
 }
 
-export abstract class RequestChain<T> implements Chainable<T> {
+export abstract class ProcessChain<T> implements Chainable<T> {
   protected _next?: Nullable<Chainable<T>>
 
+  /**
+   * Retrieves the next item in the chain.
+   *
+   * @returns {Nullable<Chainable<T>>} The next item in the chain, or null if there isn't a next item.
+   */
   get next(): Nullable<Chainable<T>> {
     return this._next || null
   }
@@ -56,20 +79,54 @@ export abstract class RequestChain<T> implements Chainable<T> {
     this._next = null
   }
 
-  setNext(handler: Chainable<T>): void {
-    this._next = handler
+  /**
+   * Appends a chainable object to the current object.
+   *
+   * @param {Chainable<T>} chainable - The chainable object to append.
+   * @return {void} - This method does not return anything.
+   */
+  append(chainable: Chainable<T>): void {
+    this._next = chainable
   }
 
-  removeNext(): void {
+  /**
+   * Clears the next reference of the object.
+   *
+   * @returns {void}
+   */
+  clear(): void {
     this._next = null
   }
 
-  execute(arg: T): void {
-    if (!this.handle(arg)) {
-      this.next?.execute(arg)
+  /**
+   * Executes the method with the given argument if the handle function returns false.
+   * If the handle function returns true, the method is not executed and the next method in the chain is called recursively.
+   *
+   * @param {T} arg - The argument to be passed to the method.
+   * @return {void}
+   */
+  process(arg: T): void {
+    if (this.isProcessable(arg)) {
+      this.execute(arg)
+    }
+    else {
+      this.next?.process(arg)
     }
   }
 
+  /**
+   * Checks if the given argument can be processed.
+   *
+   * @param {T} arg - The argument to check if it is processable.
+   * @return {boolean} - `true` if the argument is processable, otherwise `false`.
+   */
   abstract isProcessable(arg: T): boolean
-  protected abstract handle(arg: T): boolean
+
+  /**
+   * Executes the given argument.
+   *
+   * @param {T} arg - The argument to be executed.
+   * @return {void}
+   */
+  protected abstract execute(arg: T): void
 }
