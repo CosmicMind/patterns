@@ -18,7 +18,7 @@
  *    contributors may be used to endorse or promote products derived from
  *    this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
@@ -31,50 +31,69 @@
  */
 
 import {
-  Optional,
-} from '@cosmicmind/foundationjs'
+  it,
+  expect,
+  describe,
+} from 'vitest'
 
-/**
- * @module Command
- */
+import {
+  Command,
+  Operation,
+} from '@/index'
 
-export type Command = {
-  /**
-   * Executes the method.
-   *
-   * @return {void} Returns nothing.
-   */
-  execute(): void
-}
+class LightReceiver {
+  protected _isOn = false
 
-export type Operable = {
-  push(command: Command): void
-}
-
-export class Operation implements Operable {
-  protected commands: Command[]
-
-  constructor() {
-    this.commands = []
+  get isOn(): boolean {
+    return this._isOn
   }
 
-  /**
-   * Pushes a command onto the command stack and executes it.
-   *
-   * @param {Command} command - The command to push onto the stack.
-   * @return {void}
-   */
-  push(command: Command): void {
-    command.execute()
-    this.commands.push(command)
+  turnOn(): void {
+    this._isOn = true
   }
 
-  /**
-   * Removes and returns the last command from the list of commands.
-   *
-   * @returns {Optional<Command>} The last command, or undefined if the list is empty.
-   */
-  pop(): Optional<Command> {
-    return this.commands.pop()
+  turnOff(): void {
+    this._isOn = false
   }
 }
+
+class TurnOnLightCommand implements Command {
+  protected light: LightReceiver
+
+  constructor(light: LightReceiver) {
+    this.light = light
+  }
+
+  execute(): void {
+    this.light.turnOn()
+  }
+}
+
+class TurnOffLightCommand implements Command {
+  protected light: LightReceiver
+
+  constructor(light: LightReceiver) {
+    this.light = light
+  }
+
+  execute(): void {
+    this.light.turnOff()
+  }
+}
+
+describe('Command', () => {
+  it('Command execution', () => {
+    const op = new Operation()
+    const light = new LightReceiver()
+
+    op.push(new TurnOnLightCommand(light))
+    expect(light.isOn).toBeTruthy()
+
+    op.push(new TurnOffLightCommand(light))
+    expect(light.isOn).toBeFalsy()
+
+    expect(op.pop()).instanceof(TurnOffLightCommand)
+    expect(op.pop()).instanceof(TurnOnLightCommand)
+    expect(op.pop()).toBeUndefined()
+  })
+})

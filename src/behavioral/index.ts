@@ -30,6 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+export * from '@/behavioral/Command'
 export * from '@/behavioral/Observable'
 export * from '@/behavioral/Observable'
 export * from '@/behavioral/Plugin'
