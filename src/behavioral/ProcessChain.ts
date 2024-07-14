@@ -47,20 +47,20 @@ export type Chainable<T> = {
   get next(): Nullable<Chainable<T>>
 
   /**
-   * Executes the provided argument of type T.
+   * Executes the method with the given arguments.
    *
-   * @param {T} arg - The argument to be executed.
-   * @return {void} - This method does not return any value.
+   * @param {...T} args - The arguments to be passed to the method.
+   * @return {void}
    */
-  process(arg: T): void
+  execute(...args: T[]): void
 
   /**
-   * Checks if the provided argument is processable.
+   * Checks if the given arguments can be processed.
    *
-   * @param {T} arg - The argument to be checked for processability.
-   * @return {boolean} - Returns `true` if the argument is processable, otherwise returns `false`.
+   * @param {...T} args - The arguments to be checked.
+   * @return {void}
    */
-  isProcessable(arg: T): boolean
+  isProcessable(...args: T[]): void
 }
 
 export abstract class ProcessChain<T> implements Chainable<T> {
@@ -99,34 +99,37 @@ export abstract class ProcessChain<T> implements Chainable<T> {
   }
 
   /**
-   * Executes the method with the given argument if the handle function returns false.
-   * If the handle function returns true, the method is not executed and the next method in the chain is called recursively.
+   * Executes the processor if the given arguments are executable,
+   * otherwise passes the arguments to the next execute method in the chain.
    *
-   * @param {T} arg - The argument to be passed to the method.
-   * @return {void}
+   * @template T - Type of the arguments.
+   *
+   * @param {...T[]} args - The arguments to be passed to the processor.
+   *
+   * @returns {void}
    */
-  process(arg: T): void {
-    if (this.isProcessable(arg)) {
-      this.execute(arg)
+  execute(...args: T[]): void {
+    if (this.isProcessable(...args)) {
+      this.processor(...args)
     }
     else {
-      this.next?.process(arg)
+      this.next?.execute(...args)
     }
   }
 
   /**
-   * Checks if the given argument can be processed.
+   * Determines if the given arguments are processable.
    *
-   * @param {T} arg - The argument to check if it is processable.
-   * @return {boolean} - `true` if the argument is processable, otherwise `false`.
+   * @param {...T} args - The arguments to be checked for processability.
+   * @return {boolean} - True if the arguments are processable, false otherwise.
    */
-  abstract isProcessable(arg: T): boolean
+  abstract isProcessable(...args: T[]): boolean
 
   /**
-   * Executes the given argument.
+   * Process the given arguments of type T.
    *
-   * @param {T} arg - The argument to be executed.
+   * @param {...T} args - The arguments to be processed.
    * @return {void}
    */
-  protected abstract execute(arg: T): void
+  protected abstract processor(...args: T[]): void
 }

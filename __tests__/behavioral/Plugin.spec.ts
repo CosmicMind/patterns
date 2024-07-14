@@ -37,68 +37,82 @@ import {
 } from 'vitest'
 
 import {
-  ProcessChain,
+  Plugin,
+  PluginManager,
 } from '@/index'
 
 type Data = {
   prop: number
 }
 
-class DataProcessChain extends ProcessChain<Data> {
-  isProcessable(data: Data): boolean {
-    return 'prop' in data
+class PluginA extends Plugin<Data> {
+  get name(): string {
+    return 'Plugin A'
   }
 
-  protected execute(data: Data): void {
+  execute(data: Data): void {
     ++data.prop
   }
 }
 
-class UnprocessableProcessChain extends ProcessChain<Data> {
-  isProcessable(data: Data): boolean {
-    return !('prop' in data)
+class PluginB extends Plugin<Data> {
+  get name(): string {
+    return 'Plugin B'
   }
 
-  protected execute(data: Data): void {
-    ++data.prop
+  execute(data: Data): void {
+    data.prop += 2
   }
 }
 
-describe('ProcessChain', () => {
-  it('count the links in the chain', () => {
-    const a = new DataProcessChain()
-    const b = new DataProcessChain()
+describe('Plugin', () => {
+  it('plugin execution', () => {
+    const pm = new PluginManager<Data>()
+
+    const a = new PluginA()
+    const b = new PluginB()
 
     const data = {
       prop: 0,
     }
 
-    expect(a.isProcessable(data)).toBeTruthy()
-    expect(b.isProcessable(data)).toBeTruthy()
+    expect(pm.register(a)).toBeTruthy()
+    expect(pm.register(a)).toBeFalsy()
 
-    a.append(b)
-    a.process(data)
+    expect(pm.register(b)).toBeTruthy()
+    expect(pm.register(b)).toBeFalsy()
 
-    expect(data.prop).toBe(1)
+    expect(pm.deregister('bogus plugin')).toBeFalsy()
+
+    pm.execute(data)
+
+    expect(data.prop).toBe(3)
   })
 
-  it('break the links in the chain', () => {
-    const a = new UnprocessableProcessChain()
-    const b = new DataProcessChain()
-    const c = new DataProcessChain()
+  it('plugin removal', () => {
+    const pm = new PluginManager<Data>()
+
+    const a = new PluginA()
+    const b = new PluginB()
 
     const data = {
       prop: 0,
     }
 
-    expect(a.isProcessable(data)).toBeFalsy()
-    expect(b.isProcessable(data)).toBeTruthy()
-    expect(c.isProcessable(data)).toBeTruthy()
+    expect(pm.register(a)).toBeTruthy()
+    expect(pm.register(a)).toBeFalsy()
 
-    a.append(b)
-    b.append(c)
-    a.process(data)
+    expect(pm.register(b)).toBeTruthy()
+    expect(pm.register(b)).toBeFalsy()
 
-    expect(data.prop).toBe(1)
+    expect(pm.deregister(a)).toBeTruthy()
+    expect(pm.deregister(a.name)).toBeFalsy()
+
+    pm.execute(data)
+
+    expect(data.prop).toBe(2)
+
+    expect(pm.deregister(b.name)).toBeTruthy()
+    expect(pm.deregister(a)).toBeFalsy()
   })
 })
