@@ -37,14 +37,14 @@ import {
 } from 'vitest'
 
 import {
-  ProcessChain,
+  RequestChain,
 } from '@/index'
 
 type Data = {
   prop: number
 }
 
-class ProcessableChain extends ProcessChain<Data> {
+class ProcessableChain extends RequestChain<Data> {
   isProcessable(data: Data): boolean {
     return 'prop' in data
   }
@@ -54,7 +54,7 @@ class ProcessableChain extends ProcessChain<Data> {
   }
 }
 
-class UnprocessableChain extends ProcessChain<Data> {
+class UnprocessableChain extends RequestChain<Data> {
   isProcessable(data: Data): boolean {
     return !('prop' in data)
   }
@@ -64,7 +64,7 @@ class UnprocessableChain extends ProcessChain<Data> {
   }
 }
 
-describe('ProcessChain', () => {
+describe('RequestChain', () => {
   it('count the links in the chain', () => {
     const a = new ProcessableChain()
     const b = new ProcessableChain()

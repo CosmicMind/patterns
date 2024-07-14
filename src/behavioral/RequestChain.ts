@@ -31,20 +31,20 @@
  */
 
 /**
- * @module ProcessChain
+ * @module RequestChain
  */
 
 import {
-  Nullable,
+  Optional,
 } from '@cosmicmind/foundationjs'
 
 export type Chainable<T> = {
   /**
    * Retrieves the next value in the chain.
    *
-   * @return {Nullable<Chainable<T>>} The next value in the chain, or null if there is none.
+   * @return {Optional<Chainable<T>>} The next value in the chain, or undefined if there is none.
    */
-  get next(): Nullable<Chainable<T>>
+  get next(): Optional<Chainable<T>>
 
   /**
    * Executes the method with the given arguments.
@@ -63,20 +63,16 @@ export type Chainable<T> = {
   isProcessable(...args: T[]): void
 }
 
-export abstract class ProcessChain<T> implements Chainable<T> {
-  protected _next?: Nullable<Chainable<T>>
+export abstract class RequestChain<T> implements Chainable<T> {
+  protected _next: Optional<Chainable<T>>
 
   /**
    * Retrieves the next item in the chain.
    *
-   * @returns {Nullable<Chainable<T>>} The next item in the chain, or null if there isn't a next item.
+   * @returns {Optional<Chainable<T>>} The next item in the chain, or undefined if there isn't a next item.
    */
-  get next(): Nullable<Chainable<T>> {
-    return this._next || null
-  }
-
-  constructor() {
-    this._next = null
+  get next(): Optional<Chainable<T>> {
+    return this._next
   }
 
   /**
@@ -95,7 +91,7 @@ export abstract class ProcessChain<T> implements Chainable<T> {
    * @returns {void}
    */
   clear(): void {
-    this._next = null
+    this._next = undefined
   }
 
   /**

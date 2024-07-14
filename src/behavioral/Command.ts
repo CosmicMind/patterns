@@ -18,7 +18,7 @@
  *    contributors may be used to endorse or promote products derived from
  *    this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
@@ -30,7 +30,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export * from '@/behavioral/Observable'
-export * from '@/behavioral/Observable'
-export * from '@/behavioral/Plugin'
-export * from '@/behavioral/RequestChain'
+import {
+  Optional,
+} from '@cosmicmind/foundationjs'
+
+/**
+ * @module Command
+ */
+
+export type Command = {
+  /**
+   * Executes the method.
+   *
+   * @return {void} Returns nothing.
+   */
+  execute(): void
+}
+
+export type Operable = {
+  execute(command: Command): void
+}
+
+export class Operation implements Operable {
+  protected commands: Command[]
+
+  constructor() {
+    this.commands = []
+  }
+
+  execute(command: Command): void {
+    command.execute()
+    this.commands.push(command)
+  }
+
+  pop(): Optional<Command> {
+    return this.commands.pop()
+  }
+}
