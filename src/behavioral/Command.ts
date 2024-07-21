@@ -35,7 +35,7 @@
  */
 
 import {
-  Optional,
+	Optional,
 } from '@cosmicmind/foundationjs'
 
 export type Command = {
@@ -44,7 +44,7 @@ export type Command = {
    *
    * @return {boolean} Returns a boolean value indicating the success or failure of the execution.
    */
-  execute(): boolean
+  execute(): boolean | Promise<boolean>
 }
 
 export type Sender<T extends Command> = {
@@ -62,30 +62,29 @@ export type HistoryStack = {
 }
 
 export class CommandHistory implements HistoryStack {
-  protected commands: Command[]
+	protected commands: Command[]
 
-  constructor() {
-    this.commands = []
-  }
+	constructor() {
+		this.commands = []
+	}
 
-  /**
-   * Pushes a command onto the command stack and executes it.
-   *
-   * @param {Command} command - The command to push onto the stack.
-   * @return {void}
-   */
-  push(command: Command): void {
-    if (command.execute()) {
-      this.commands.push(command)
-    }
-  }
+	/**
+	 * Adds a command to the commands array.
+	 *
+	 * @param {Command} command - The command to be added.
+	 *
+	 * @return {void}
+	 */
+	push(command: Command): void {
+		this.commands.push(command)
+	}
 
-  /**
+	/**
    * Removes and returns the last command from the list of commands.
    *
    * @returns {Optional<Command>} The last command, or undefined if the list is empty.
    */
-  pop(): Optional<Command> {
-    return this.commands.pop()
-  }
+	pop(): Optional<Command> {
+		return this.commands.pop()
+	}
 }

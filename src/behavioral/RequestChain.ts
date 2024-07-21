@@ -129,3 +129,23 @@ export abstract class RequestChain<T> implements Chainable<T> {
    */
   protected abstract processor(...args: T[]): void
 }
+
+/**
+ * Generates a request chain from multiple chainable objects.
+ *
+ * @param {...RequestChain<T>} chainables - The chainable objects to generate the chain from.
+ * @returns {Optional<RequestChain<T>>} - The generated request chain.
+ */
+export function generateRequestChain<T>(...chainables: RequestChain<T>[]): Optional<RequestChain<T>> {
+  if (1 < chainables.length) {
+    let chain = chainables[0]
+
+    for (let i = 1, l = chainables.length; i < l; ++i) {
+      const item = chainables[i]
+      chain.append(item)
+      chain = item
+    }
+  }
+
+  return chainables[0]
+}
