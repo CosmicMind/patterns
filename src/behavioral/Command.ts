@@ -30,28 +30,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {
-  Optional,
-} from '@cosmicmind/foundationjs'
-
 /**
  * @module Command
  */
+
+import {
+  Optional,
+} from '@cosmicmind/foundationjs'
 
 export type Command = {
   /**
    * Executes the method.
    *
-   * @return {void} Returns nothing.
+   * @return {boolean} Returns a boolean value indicating the success or failure of the execution.
    */
+  execute(): boolean
+}
+
+export type Sender<T extends Command> = {
+  setCommand(command: T): void
   execute(): void
 }
 
-export type Operable = {
-  push(command: Command): void
+export type Receivable<T extends Command> = {
+  operation(...commands: T[]): boolean
 }
 
-export class Operation implements Operable {
+export type HistoryStack = {
+  push(command: Command): void
+  pop(): Optional<Command>
+}
+
+export class CommandHistory implements HistoryStack {
   protected commands: Command[]
 
   constructor() {
@@ -65,8 +75,9 @@ export class Operation implements Operable {
    * @return {void}
    */
   push(command: Command): void {
-    command.execute()
-    this.commands.push(command)
+    if (command.execute()) {
+      this.commands.push(command)
+    }
   }
 
   /**
