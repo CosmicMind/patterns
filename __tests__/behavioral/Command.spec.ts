@@ -38,7 +38,7 @@ import {
 
 import {
   Command,
-  Operation,
+  CommandHistory,
 } from '@/index'
 
 class LightReceiver {
@@ -64,8 +64,9 @@ class TurnOnLightCommand implements Command {
     this.light = light
   }
 
-  execute(): void {
+  execute(): boolean {
     this.light.turnOn()
+    return true
   }
 }
 
@@ -76,24 +77,30 @@ class TurnOffLightCommand implements Command {
     this.light = light
   }
 
-  execute(): void {
+  execute(): boolean {
     this.light.turnOff()
+    return true
   }
 }
 
 describe('Command', () => {
   it('Command execution', () => {
-    const op = new Operation()
+    const commandHistory = new CommandHistory()
     const light = new LightReceiver()
 
-    op.push(new TurnOnLightCommand(light))
+    const cmd1 = new TurnOnLightCommand(light)
+    expect(cmd1.execute()).toBeTruthy()
     expect(light.isOn).toBeTruthy()
+    commandHistory.push(cmd1)
 
-    op.push(new TurnOffLightCommand(light))
+
+    const cmd2 = new TurnOffLightCommand(light)
+    expect(cmd2.execute()).toBeTruthy()
     expect(light.isOn).toBeFalsy()
+    commandHistory.push(cmd2)
 
-    expect(op.pop()).instanceof(TurnOffLightCommand)
-    expect(op.pop()).instanceof(TurnOnLightCommand)
-    expect(op.pop()).toBeUndefined()
+    expect(commandHistory.pop()).instanceof(TurnOffLightCommand)
+    expect(commandHistory.pop()).instanceof(TurnOnLightCommand)
+    expect(commandHistory.pop()).toBeUndefined()
   })
 })
