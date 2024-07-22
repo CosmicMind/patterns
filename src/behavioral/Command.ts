@@ -59,6 +59,7 @@ export type Receivable<T extends Command> = {
 export type HistoryStack = {
   push(command: Command): void
   pop(): Optional<Command>
+  clear(): void
 }
 
 export class CommandHistory implements HistoryStack {
@@ -86,5 +87,9 @@ export class CommandHistory implements HistoryStack {
    */
   pop(): Optional<Command> {
     return this.commands.pop()
+  }
+
+  clear(): void {
+    this.commands = []
   }
 }
