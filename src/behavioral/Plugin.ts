@@ -34,7 +34,24 @@
  * @module Plugin
  */
 
-export abstract class Plugin<T> {
+export type Pluginable<T> = {
+  /**
+   * Returns the name as a string.
+   *
+   * @returns {string} The name.
+   */
+  get name(): string
+
+  /**
+   * Executes the method with the given arguments.
+   *
+   * @param {...T} args - The arguments to be passed to the method.
+   * @return {void}
+   */
+  execute(...args: T[]): void
+}
+
+export abstract class Plugin<T> implements Pluginable<T> {
   /**
    * Retrieves the name.
    *
