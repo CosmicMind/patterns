@@ -83,8 +83,6 @@ export class PluginManager<T> {
         this.plugins.push(plugin)
       }
     }
-
-    return false
   }
 
   deregister(...plugins: Plugin<T>[]): void {
