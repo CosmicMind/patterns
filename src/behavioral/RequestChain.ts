@@ -35,7 +35,7 @@
  */
 
 import {
-  Optional,
+    Optional,
 } from '@cosmicmind/foundationjs'
 
 export type Chainable<T> = {
@@ -64,37 +64,37 @@ export type Chainable<T> = {
 }
 
 export abstract class RequestChain<T> implements Chainable<T> {
-  protected _next: Optional<Chainable<T>>
+    protected _next: Optional<Chainable<T>>
 
-  /**
+    /**
    * Retrieves the next item in the chain.
    *
    * @returns {Optional<Chainable<T>>} The next item in the chain, or undefined if there isn't a next item.
    */
-  get next(): Optional<Chainable<T>> {
-    return this._next
-  }
+    get next(): Optional<Chainable<T>> {
+        return this._next
+    }
 
-  /**
+    /**
    * Appends a chainable object to the current object.
    *
    * @param {Chainable<T>} chainable - The chainable object to append.
    * @return {void} - This method does not return anything.
    */
-  append(chainable: Chainable<T>): void {
-    this._next = chainable
-  }
+    append(chainable: Chainable<T>): void {
+        this._next = chainable
+    }
 
-  /**
+    /**
    * Clears the next reference of the object.
    *
    * @returns {void}
    */
-  clear(): void {
-    this._next = undefined
-  }
+    clear(): void {
+        this._next = undefined
+    }
 
-  /**
+    /**
    * Executes the processor if the given arguments are executable,
    * otherwise passes the arguments to the next execute method in the chain.
    *
@@ -104,14 +104,13 @@ export abstract class RequestChain<T> implements Chainable<T> {
    *
    * @returns {void}
    */
-  execute(...args: T[]): void {
-    if (this.isProcessable(...args)) {
-      this.processor(...args)
+    execute(...args: T[]): void {
+        if (this.isProcessable(...args)) {
+            this.processor(...args)
+        } else {
+            this.next?.execute(...args)
+        }
     }
-    else {
-      this.next?.execute(...args)
-    }
-  }
 
   /**
    * Determines if the given arguments are processable.
@@ -137,15 +136,15 @@ export abstract class RequestChain<T> implements Chainable<T> {
  * @returns {Optional<RequestChain<T>>} - The generated request chain.
  */
 export function generateRequestChain<T>(...chainables: RequestChain<T>[]): Optional<RequestChain<T>> {
-  if (1 < chainables.length) {
-    let chain = chainables[0]
+    if (1 < chainables.length) {
+        let chain = chainables[0]
 
-    for (let i = 1, l = chainables.length; i < l; ++i) {
-      const item = chainables[i]
-      chain.append(item)
-      chain = item
+        for (let i = 1, l = chainables.length; i < l; ++i) {
+            const item = chainables[i]
+            chain.append(item)
+            chain = item
+        }
     }
-  }
 
-  return chainables[0]
+    return chainables[0]
 }
