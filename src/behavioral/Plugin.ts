@@ -75,24 +75,30 @@ export class PluginManager<T> {
     this.plugins = []
   }
 
-  register(...plugins: Plugin<T>[]): void {
+  register(...plugins: Plugin<T>[] | string[]): boolean {
     for (const plugin of plugins) {
       const i = this.indexOf(plugin)
 
       if (-1 === i) {
         this.plugins.push(plugin)
+        return true
       }
     }
+
+    return false
   }
 
-  deregister(...plugins: Plugin<T>[]): void {
+  deregister(...plugins: Plugin<T>[] | string[]): boolean {
     for (const plugin of plugins) {
       const i = this.indexOf(plugin)
 
       if (-1 < i) {
         this.plugins.splice(i, 1)
+        return true
       }
     }
+
+    return false
   }
 
   /**
@@ -113,9 +119,11 @@ export class PluginManager<T> {
    * @param {Plugin<T> | string} plugin - The plugin to search for. Can be either a Plugin object or a string representing the plugin name.
    * @return {number} - The index of the plugin in the plugins array. Returns -1 if the plugin is not found.
    */
-  protected indexOf(plugin: Plugin<T>): number {
+  protected indexOf(plugin: Plugin<T> | string): number {
     const plugins = this.plugins
-    const name = plugin.name
+    const name = 'string' === typeof plugin
+                            ? plugin
+                            : plugin.name
 
     for (let i = plugins.length - 1; i >= 0; --i) {
       if (name === plugins[i].name) {
