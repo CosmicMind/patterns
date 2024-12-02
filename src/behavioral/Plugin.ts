@@ -75,7 +75,7 @@ export class PluginManager<T> {
     this.plugins = []
   }
 
-  register(...plugins: Plugin<T>[] | string[]): boolean {
+  register(...plugins: Plugin<T>[]): boolean {
     for (const plugin of plugins) {
       const i = this.indexOf(plugin)
 
@@ -122,8 +122,8 @@ export class PluginManager<T> {
   protected indexOf(plugin: Plugin<T> | string): number {
     const plugins = this.plugins
     const name = 'string' === typeof plugin
-                            ? plugin
-                            : plugin.name
+      ? plugin
+      : plugin.name
 
     for (let i = plugins.length - 1; i >= 0; --i) {
       if (name === plugins[i].name) {
