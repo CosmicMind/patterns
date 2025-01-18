@@ -31,13 +31,13 @@
  */
 
 import {
-  it,
-  expect,
-  describe,
+    it,
+    expect,
+    describe,
 } from 'vitest'
 
 import {
-  RequestChain,
+    RequestChain,
 } from '@/index'
 
 type Data = {
@@ -45,60 +45,60 @@ type Data = {
 }
 
 class ProcessableChain extends RequestChain<Data> {
-  isProcessable(data: Data): boolean {
-    return 'prop' in data
-  }
+    isProcessable(data: Data): boolean {
+        return 'prop' in data
+    }
 
-  protected processor(data: Data): void {
-    ++data.prop
-  }
+    protected processor(data: Data): void {
+        ++data.prop
+    }
 }
 
 class UnprocessableChain extends RequestChain<Data> {
-  isProcessable(data: Data): boolean {
-    return !('prop' in data)
-  }
+    isProcessable(data: Data): boolean {
+        return !('prop' in data)
+    }
 
-  protected processor(data: Data): void {
-    ++data.prop
-  }
+    protected processor(data: Data): void {
+        ++data.prop
+    }
 }
 
 describe('RequestChain', () => {
-  it('count the links in the chain', () => {
-    const a = new ProcessableChain()
-    const b = new ProcessableChain()
+    it('count the links in the chain', () => {
+        const a = new ProcessableChain()
+        const b = new ProcessableChain()
 
-    const data = {
-      prop: 0,
-    }
+        const data = {
+            prop: 0,
+        }
 
-    expect(a.isProcessable(data)).toBeTruthy()
-    expect(b.isProcessable(data)).toBeTruthy()
+        expect(a.isProcessable(data)).toBeTruthy()
+        expect(b.isProcessable(data)).toBeTruthy()
 
-    a.append(b)
-    a.execute(data)
+        a.append(b)
+        a.execute(data)
 
-    expect(data.prop).toBe(1)
-  })
+        expect(data.prop).toBe(1)
+    })
 
-  it('break the links in the chain', () => {
-    const a = new UnprocessableChain()
-    const b = new ProcessableChain()
-    const c = new ProcessableChain()
+    it('break the links in the chain', () => {
+        const a = new UnprocessableChain()
+        const b = new ProcessableChain()
+        const c = new ProcessableChain()
 
-    const data = {
-      prop: 0,
-    }
+        const data = {
+            prop: 0,
+        }
 
-    expect(a.isProcessable(data)).toBeFalsy()
-    expect(b.isProcessable(data)).toBeTruthy()
-    expect(c.isProcessable(data)).toBeTruthy()
+        expect(a.isProcessable(data)).toBeFalsy()
+        expect(b.isProcessable(data)).toBeTruthy()
+        expect(c.isProcessable(data)).toBeTruthy()
 
-    a.append(b)
-    b.append(c)
-    a.execute(data)
+        a.append(b)
+        b.append(c)
+        a.execute(data)
 
-    expect(data.prop).toBe(1)
-  })
+        expect(data.prop).toBe(1)
+    })
 })

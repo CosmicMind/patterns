@@ -31,76 +31,76 @@
  */
 
 import {
-  it,
-  expect,
-  describe,
+    it,
+    expect,
+    describe,
 } from 'vitest'
 
 import {
-  Command,
-  CommandHistory,
+    Command,
+    CommandHistory,
 } from '@/index'
 
 class LightReceiver {
-  protected _isOn = false
+    protected _isOn = false
 
-  get isOn(): boolean {
-    return this._isOn
-  }
+    get isOn(): boolean {
+        return this._isOn
+    }
 
-  turnOn(): void {
-    this._isOn = true
-  }
+    turnOn(): void {
+        this._isOn = true
+    }
 
-  turnOff(): void {
-    this._isOn = false
-  }
+    turnOff(): void {
+        this._isOn = false
+    }
 }
 
 class TurnOnLightCommand implements Command {
-  protected light: LightReceiver
+    protected light: LightReceiver
 
-  constructor(light: LightReceiver) {
-    this.light = light
-  }
+    constructor(light: LightReceiver) {
+        this.light = light
+    }
 
-  execute(): boolean {
-    this.light.turnOn()
-    return true
-  }
+    execute(): boolean {
+        this.light.turnOn()
+        return true
+    }
 }
 
 class TurnOffLightCommand implements Command {
-  protected light: LightReceiver
+    protected light: LightReceiver
 
-  constructor(light: LightReceiver) {
-    this.light = light
-  }
+    constructor(light: LightReceiver) {
+        this.light = light
+    }
 
-  execute(): boolean {
-    this.light.turnOff()
-    return true
-  }
+    execute(): boolean {
+        this.light.turnOff()
+        return true
+    }
 }
 
 describe('Command', () => {
-  it('Command execution', () => {
-    const commandHistory = new CommandHistory()
-    const light = new LightReceiver()
+    it('Command execution', () => {
+        const commandHistory = new CommandHistory()
+        const light = new LightReceiver()
 
-    const cmd1 = new TurnOnLightCommand(light)
-    expect(cmd1.execute()).toBeTruthy()
-    expect(light.isOn).toBeTruthy()
-    commandHistory.push(cmd1)
+        const cmd1 = new TurnOnLightCommand(light)
+        expect(cmd1.execute()).toBeTruthy()
+        expect(light.isOn).toBeTruthy()
+        commandHistory.push(cmd1)
 
 
-    const cmd2 = new TurnOffLightCommand(light)
-    expect(cmd2.execute()).toBeTruthy()
-    expect(light.isOn).toBeFalsy()
-    commandHistory.push(cmd2)
+        const cmd2 = new TurnOffLightCommand(light)
+        expect(cmd2.execute()).toBeTruthy()
+        expect(light.isOn).toBeFalsy()
+        commandHistory.push(cmd2)
 
-    expect(commandHistory.pop()).instanceof(TurnOffLightCommand)
-    expect(commandHistory.pop()).instanceof(TurnOnLightCommand)
-    expect(commandHistory.pop()).toBeUndefined()
-  })
+        expect(commandHistory.pop()).instanceof(TurnOffLightCommand)
+        expect(commandHistory.pop()).instanceof(TurnOnLightCommand)
+        expect(commandHistory.pop()).toBeUndefined()
+    })
 })

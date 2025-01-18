@@ -35,7 +35,7 @@
  */
 
 import {
-  assign,
+    assign,
 } from '@cosmicmind/foundationjs'
 
 /**
@@ -55,10 +55,10 @@ export interface Prototypeable {
  * the copy of the instance.
  */
 export abstract class Prototype implements Prototypeable {
-  /**
+    /**
    * Creates a copy of itself and returns it.
    */
-  clone(): this {
-    return assign(Object.create(Object.getPrototypeOf(this) ?? null), this) as this
-  }
+    clone(): this {
+        return assign(Object.create(Object.getPrototypeOf(this) ?? null), this) as this
+    }
 }

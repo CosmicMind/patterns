@@ -31,14 +31,14 @@
  */
 
 import {
-  it,
-  expect,
-  describe,
+    it,
+    expect,
+    describe,
 } from 'vitest'
 
 import {
-  Plugin,
-  PluginManager,
+    Plugin,
+    PluginManager,
 } from '@/index'
 
 type Data = {
@@ -46,73 +46,73 @@ type Data = {
 }
 
 class PluginA extends Plugin<Data> {
-  get name(): string {
-    return 'Plugin A'
-  }
+    get name(): string {
+        return 'Plugin A'
+    }
 
-  execute(data: Data): void {
-    ++data.prop
-  }
+    execute(data: Data): void {
+        ++data.prop
+    }
 }
 
 class PluginB extends Plugin<Data> {
-  get name(): string {
-    return 'Plugin B'
-  }
+    get name(): string {
+        return 'Plugin B'
+    }
 
-  execute(data: Data): void {
-    data.prop += 2
-  }
+    execute(data: Data): void {
+        data.prop += 2
+    }
 }
 
 describe('Plugin', () => {
-  it('plugin execution', () => {
-    const pm = new PluginManager<Data>()
+    it('plugin execution', () => {
+        const pm = new PluginManager<Data>()
 
-    const a = new PluginA()
-    const b = new PluginB()
+        const a = new PluginA()
+        const b = new PluginB()
 
-    const data = {
-      prop: 0,
-    }
+        const data = {
+            prop: 0,
+        }
 
-    expect(pm.register(a)).toBeTruthy()
-    expect(pm.register(a)).toBeFalsy()
+        expect(pm.register(a)).toBeTruthy()
+        expect(pm.register(a)).toBeFalsy()
 
-    expect(pm.register(b)).toBeTruthy()
-    expect(pm.register(b)).toBeFalsy()
+        expect(pm.register(b)).toBeTruthy()
+        expect(pm.register(b)).toBeFalsy()
 
-    expect(pm.deregister('bogus plugin')).toBeFalsy()
+        expect(pm.deregister('bogus plugin')).toBeFalsy()
 
-    pm.execute(data)
+        pm.execute(data)
 
-    expect(data.prop).toBe(3)
-  })
+        expect(data.prop).toBe(3)
+    })
 
-  it('plugin removal', () => {
-    const pm = new PluginManager<Data>()
+    it('plugin removal', () => {
+        const pm = new PluginManager<Data>()
 
-    const a = new PluginA()
-    const b = new PluginB()
+        const a = new PluginA()
+        const b = new PluginB()
 
-    const data = {
-      prop: 0,
-    }
+        const data = {
+            prop: 0,
+        }
 
-    expect(pm.register(a)).toBeTruthy()
-    expect(pm.register(a)).toBeFalsy()
+        expect(pm.register(a)).toBeTruthy()
+        expect(pm.register(a)).toBeFalsy()
 
-    expect(pm.register(b)).toBeTruthy()
-    expect(pm.register(b)).toBeFalsy()
+        expect(pm.register(b)).toBeTruthy()
+        expect(pm.register(b)).toBeFalsy()
 
-    expect(pm.deregister(a)).toBeTruthy()
-    expect(pm.deregister(a.name)).toBeFalsy()
+        expect(pm.deregister(a)).toBeTruthy()
+        expect(pm.deregister(a.name)).toBeFalsy()
 
-    pm.execute(data)
+        pm.execute(data)
 
-    expect(data.prop).toBe(2)
+        expect(data.prop).toBe(2)
 
-    expect(pm.deregister(b.name)).toBeTruthy()
-    expect(pm.deregister(a)).toBeFalsy()
-  })
+        expect(pm.deregister(b.name)).toBeTruthy()
+        expect(pm.deregister(a)).toBeFalsy()
+    })
 })

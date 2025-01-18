@@ -69,68 +69,68 @@ export abstract class Plugin<T> implements Pluginable<T> {
 }
 
 export class PluginManager<T> {
-  protected plugins: Plugin<T>[]
+    protected plugins: Plugin<T>[]
 
-  constructor() {
-    this.plugins = []
-  }
-
-  register(...plugins: Plugin<T>[]): boolean {
-    for (const plugin of plugins) {
-      const i = this.indexOf(plugin)
-
-      if (-1 === i) {
-        this.plugins.push(plugin)
-        return true
-      }
+    constructor() {
+        this.plugins = []
     }
 
-    return false
-  }
+    register(...plugins: Plugin<T>[]): boolean {
+        for (const plugin of plugins) {
+            const i = this.indexOf(plugin)
 
-  deregister(...plugins: Plugin<T>[] | string[]): boolean {
-    for (const plugin of plugins) {
-      const i = this.indexOf(plugin)
+            if (-1 === i) {
+                this.plugins.push(plugin)
+                return true
+            }
+        }
 
-      if (-1 < i) {
-        this.plugins.splice(i, 1)
-        return true
-      }
+        return false
     }
 
-    return false
-  }
+    deregister(...plugins: Plugin<T>[] | string[]): boolean {
+        for (const plugin of plugins) {
+            const i = this.indexOf(plugin)
 
-  /**
+            if (-1 < i) {
+                this.plugins.splice(i, 1)
+                return true
+            }
+        }
+
+        return false
+    }
+
+    /**
    * Executes the `execute` method of all plugins.
    *
    * @param {...T} args - The arguments to pass to the `execute` method.
    * @return {void}
    */
-  execute(...args: T[]): void {
-    for (const p of this.plugins) {
-      p.execute(...args)
+    execute(...args: T[]): void {
+        for (const p of this.plugins) {
+            p.execute(...args)
+        }
     }
-  }
 
-  /**
+    /**
    * Finds the index of the specified plugin in the plugins array.
    *
    * @param {Plugin<T> | string} plugin - The plugin to search for. Can be either a Plugin object or a string representing the plugin name.
    * @return {number} - The index of the plugin in the plugins array. Returns -1 if the plugin is not found.
    */
-  protected indexOf(plugin: Plugin<T> | string): number {
-    const plugins = this.plugins
-    const name = 'string' === typeof plugin
-      ? plugin
-      : plugin.name
+    protected indexOf(plugin: Plugin<T> | string): number {
+        const plugins = this.plugins
+        const name = 'string' === typeof plugin
+            ? plugin
+            : plugin.name
 
-    for (let i = plugins.length - 1; i >= 0; --i) {
-      if (name === plugins[i].name) {
-        return i
-      }
+        for (let i = plugins.length - 1; i >= 0; --i) {
+            if (name === plugins[i].name) {
+                return i
+            }
+        }
+
+        return -1
     }
-
-    return -1
-  }
 }

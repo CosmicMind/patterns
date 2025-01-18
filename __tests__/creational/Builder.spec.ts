@@ -31,17 +31,17 @@
  */
 
 import {
-  it,
-  expect,
-  describe,
+    guard,
+} from '@cosmicmind/foundationjs'
+import {
+    it,
+    expect,
+    describe,
 } from 'vitest'
 
-import {
-  guard,
-} from '@cosmicmind/foundationjs'
 
 import {
-  Builder,
+    Builder,
 } from '@/index'
 
 type Query = {
@@ -53,49 +53,49 @@ type Query = {
 const project = 'projects'
 const version = 1
 const tags = [
-  'typescript',
-  'coding',
-  'language'
+    'typescript',
+    'coding',
+    'language'
 ]
 
 describe('Builder', () => {
-  it('set', () => {
-    const qb = new Builder<Query>({
-      project,
-      version,
+    it('set', () => {
+        const qb = new Builder<Query>({
+            project,
+            version,
+        })
+
+        qb.set('tags', tags)
+
+        const q = qb.build()
+
+        expect(guard(q, ...Object.keys(q) as (keyof Query)[])).toBeTruthy()
+
+        expect(project).toBe(q.project)
+        expect(version).toBe(q.version)
+
+        expect('undefined' !== typeof q.tags).toBeTruthy()
+        expect(tags).toBe(q.tags as string[])
     })
 
-    qb.set('tags', tags)
+    it('map', () => {
+        const qb = new Builder<Query>({
+            project,
+            version,
+        })
 
-    const q = qb.build()
+        qb.map({
+            tags,
+        })
 
-    expect(guard(q, ...Object.keys(q) as (keyof Query)[])).toBeTruthy()
+        const q = qb.build()
 
-    expect(project).toBe(q.project)
-    expect(version).toBe(q.version)
+        expect(guard(q, ...Object.keys(q) as (keyof Query)[])).toBeTruthy()
 
-    expect('undefined' !== typeof q.tags).toBeTruthy()
-    expect(tags).toBe(q.tags as string[])
-  })
+        expect(project).toBe(q.project)
+        expect(version).toBe(q.version)
 
-  it('map', () => {
-    const qb = new Builder<Query>({
-      project,
-      version,
+        expect('undefined' !== typeof q.tags).toBeTruthy()
+        expect(tags).toBe(q.tags as string[])
     })
-
-    qb.map({
-      tags,
-    })
-
-    const q = qb.build()
-
-    expect(guard(q, ...Object.keys(q) as (keyof Query)[])).toBeTruthy()
-
-    expect(project).toBe(q.project)
-    expect(version).toBe(q.version)
-
-    expect('undefined' !== typeof q.tags).toBeTruthy()
-    expect(tags).toBe(q.tags as string[])
-  })
 })

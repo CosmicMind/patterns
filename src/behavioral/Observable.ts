@@ -35,8 +35,8 @@
  */
 
 import {
-  timeout,
-  guard,
+    timeout,
+    guard,
 } from '@cosmicmind/foundationjs'
 
 export type ObservableTopics = {
@@ -48,62 +48,62 @@ export type ObservableTopicMap<T extends ObservableTopics> = {
 }
 
 export class Observable<T extends ObservableTopics> {
-  protected readonly topics: Partial<ObservableTopicMap<T>>
+    protected readonly topics: Partial<ObservableTopicMap<T>>
 
-  constructor() {
-    this.topics = {}
-  }
-
-  subscribe<K extends keyof T>(topic: K, ...fn: ((message: T[K]) => void)[]): void {
-    if (!this.topics[topic]) {
-      this.topics[topic] = new Set()
+    constructor() {
+        this.topics = {}
     }
-    const topics = this.topics[topic]
-    if (guard(topics)) {
-      for (const cb of fn) {
-        topics?.add(cb)
-      }
-    }
-  }
 
-  once<K extends keyof T>(topic: K, ...fn: ((message: T[K]) => void)[]): void {
-    const cb = (message: T[K]): void => {
-      this.unsubscribe(topic, cb)
-      for (const cb of fn) {
-        cb(message)
-      }
-    }
-    this.subscribe(topic, cb)
-  }
-
-  unsubscribe<K extends keyof T>(topic: K, ...fn: ((message: T[K]) => void)[]): void {
-    if (this.topics[topic]) {
-      const topics = this.topics[topic]
-      if (guard(topics)) {
-        for (const cb of fn) {
-          topics?.delete(cb)
+    subscribe<K extends keyof T>(topic: K, ...fn: ((message: T[K]) => void)[]): void {
+        if (!this.topics[topic]) {
+            this.topics[topic] = new Set()
         }
-      }
-    }
-  }
-
-  protected publish<K extends keyof T>(topic: K, message: T[K]): () => void {
-    return timeout((): void => {
-      const topics = this.topics[topic] as Set<((message: T[K]) => void)>
-      if (guard(topics)) {
-        for (const fn of topics) {
-          fn(message)
+        const topics = this.topics[topic]
+        if (guard(topics)) {
+            for (const cb of fn) {
+                topics?.add(cb)
+            }
         }
-      }
-    })
-  }
-
-  protected publishSync<K extends keyof T>(topic: K, message: T[K]): void {
-    const topics = this.topics[topic] as Set<((message: T[K]) => void)>
-    if (guard(topics)) {
-      for (const fn of topics) {
-        fn(message)
-      }
     }
-  }
+
+    once<K extends keyof T>(topic: K, ...fn: ((message: T[K]) => void)[]): void {
+        const cb = (message: T[K]): void => {
+            this.unsubscribe(topic, cb)
+            for (const cb of fn) {
+                cb(message)
+            }
+        }
+        this.subscribe(topic, cb)
+    }
+
+    unsubscribe<K extends keyof T>(topic: K, ...fn: ((message: T[K]) => void)[]): void {
+        if (this.topics[topic]) {
+            const topics = this.topics[topic]
+            if (guard(topics)) {
+                for (const cb of fn) {
+                    topics?.delete(cb)
+                }
+            }
+        }
+    }
+
+    protected publish<K extends keyof T>(topic: K, message: T[K]): () => void {
+        return timeout((): void => {
+            const topics = this.topics[topic] as Set<((message: T[K]) => void)>
+            if (guard(topics)) {
+                for (const fn of topics) {
+                    fn(message)
+                }
+            }
+        })
+    }
+
+    protected publishSync<K extends keyof T>(topic: K, message: T[K]): void {
+        const topics = this.topics[topic] as Set<((message: T[K]) => void)>
+        if (guard(topics)) {
+            for (const fn of topics) {
+                fn(message)
+            }
+        }
+    }
 }
