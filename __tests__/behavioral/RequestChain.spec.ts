@@ -49,8 +49,9 @@ class ProcessableChain extends RequestChain<Data> {
         return 'prop' in data
     }
 
-    protected processor(data: Data): void {
+    protected processor(data: Data): boolean {
         ++data.prop
+        return true
     }
 }
 
@@ -59,8 +60,9 @@ class UnprocessableChain extends RequestChain<Data> {
         return !('prop' in data)
     }
 
-    protected processor(data: Data): void {
+    protected processor(data: Data): boolean {
         ++data.prop
+        return true
     }
 }
 
