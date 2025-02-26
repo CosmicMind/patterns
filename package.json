@@ -1,6 +1,6 @@
 {
   "name": "@cosmicmind/patternjs",
-  "version": "0.0.1-rc-011825-3",
+  "version": "0.0.1-rc-022525-3",
   "description": "A library of Design Patterns in TypeScript.",
   "keywords": ["typescript", "design-patterns", "library", "cosmicmind", "patternjs"],
   "author": {

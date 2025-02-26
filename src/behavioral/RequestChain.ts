@@ -39,94 +39,96 @@ import {
 } from '@cosmicmind/foundationjs'
 
 export type Chainable<T> = {
-  /**
-   * Retrieves the next value in the chain.
-   *
-   * @return {Optional<Chainable<T>>} The next value in the chain, or undefined if there is none.
-   */
-  get next(): Optional<Chainable<T>>
+    /**
+     * Retrieves the next value in the chain.
+     *
+     * @return {Optional<Chainable<T>>} The next value in the chain, or undefined if there is none.
+     */
+    get next(): Optional<Chainable<T>>
 
-  /**
-   * Executes the method with the given arguments.
-   *
-   * @param {...T} args - The arguments to be passed to the method.
-   * @return {void}
-   */
-  execute(...args: T[]): void
+    /**
+     * Executes the method with the given arguments.
+     *
+     * @param {...T} args - The arguments to be passed to the method.
+     * @return {boolean}
+     */
+    execute(...args: T[]): boolean
 
-  /**
-   * Checks if the given arguments can be processed.
-   *
-   * @param {...T} args - The arguments to be checked.
-   * @return {void}
-   */
-  isProcessable(...args: T[]): void
+    /**
+     * Checks if the given arguments can be processed.
+     *
+     * @param {...T} args - The arguments to be checked.
+     * @return {boolean}
+     */
+    isProcessable(...args: T[]): boolean
 }
 
 export abstract class RequestChain<T> implements Chainable<T> {
     protected _next: Optional<Chainable<T>>
 
     /**
-   * Retrieves the next item in the chain.
-   *
-   * @returns {Optional<Chainable<T>>} The next item in the chain, or undefined if there isn't a next item.
-   */
+     * Retrieves the next item in the chain.
+     *
+     * @returns {Optional<Chainable<T>>} The next item in the chain, or undefined if there isn't a next item.
+     */
     get next(): Optional<Chainable<T>> {
         return this._next
     }
 
     /**
-   * Appends a chainable object to the current object.
-   *
-   * @param {Chainable<T>} chainable - The chainable object to append.
-   * @return {void} - This method does not return anything.
-   */
+     * Appends a chainable object to the current object.
+     *
+     * @param {Chainable<T>} chainable - The chainable object to append.
+     * @return {void} - This method does not return anything.
+     */
     append(chainable: Chainable<T>): void {
         this._next = chainable
     }
 
     /**
-   * Clears the next reference of the object.
-   *
-   * @returns {void}
-   */
+     * Clears the next reference of the object.
+     *
+     * @returns {void}
+     */
     clear(): void {
         this._next = undefined
     }
 
     /**
-   * Executes the processor if the given arguments are executable,
-   * otherwise passes the arguments to the next execute method in the chain.
-   *
-   * @template T - Type of the arguments.
-   *
-   * @param {...T[]} args - The arguments to be passed to the processor.
-   *
-   * @returns {void}
-   */
-    execute(...args: T[]): void {
+     * Executes the processor if the given arguments are executable,
+     * otherwise passes the arguments to the next execute method in the chain.
+     *
+     * @template T - Type of the arguments.
+     *
+     * @param {...T[]} args - The arguments to be passed to the processor.
+     *
+     * @returns {boolean}
+     */
+    execute(...args: T[]): boolean {
         if (this.isProcessable(...args)) {
-            this.processor(...args)
-        } else {
-            this.next?.execute(...args)
+            return this.processor(...args)
+        } else if (this.next?.execute(...args)) {
+            return true
         }
+
+        return false
     }
 
-  /**
-   * Determines if the given arguments are processable.
-   *
-   * @param {...T} args - The arguments to be checked for processability.
-   * @return {boolean} - True if the arguments are processable, false otherwise.
-   */
-  abstract isProcessable(...args: T[]): boolean
+    /**
+     * Determines if the given arguments are processable.
+     *
+     * @param {...T} args - The arguments to be checked for processability.
+     * @return {boolean} - True if the arguments are processable, false otherwise.
+     */
+    abstract isProcessable(...args: T[]): boolean
 
-  /**
-   * Process the given arguments of type T.
-   *
-   * @param {...T} args - The arguments to be processed.
-   * @return {void}
-   */
-  protected abstract processor(...args: T[]): void
+    /**
+     * Process the given arguments of type T.
+     *
+     * @param {...T} args - The arguments to be processed.
+     * @return {boolean}
+     */
+    protected abstract processor(...args: T[]): boolean
 }
 
 /**

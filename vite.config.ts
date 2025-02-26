@@ -30,8 +30,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-
 import {
     URL,
     fileURLToPath,
@@ -44,6 +42,7 @@ import {
     defineConfig,
     UserConfigExport,
 } from 'vite'
+
 import dts from 'vite-plugin-dts'
 
 export default ({ mode }: ConfigEnv): UserConfigExport => {
